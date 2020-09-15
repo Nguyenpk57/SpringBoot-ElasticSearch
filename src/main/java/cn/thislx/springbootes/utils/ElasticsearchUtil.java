@@ -49,7 +49,7 @@ public class ElasticsearchUtil {
     private static TransportClient client;
 
     /**
-     * @PostContruct是spring框架的注解 spring容器初始化的时候执行该方法
+     * @PostContruct is the annotation of the spring framework. This method is executed when the spring container is initialized.
      */
     @PostConstruct
     public void init() {
@@ -67,12 +67,12 @@ public class ElasticsearchUtil {
             LOGGER.info("Index is not exits!");
         }
         CreateIndexResponse indexresponse = client.admin().indices().prepareCreate(index).execute().actionGet();
-        LOGGER.info("执行建立成功？" + indexresponse.isAcknowledged());
+        LOGGER.info("Execution successful？" + indexresponse.isAcknowledged());
         return indexresponse.isAcknowledged();
     }
 
     /**
-     * 删除索引
+     * Delete index
      *
      * @param index
      * @return
@@ -91,7 +91,7 @@ public class ElasticsearchUtil {
     }
 
     /**
-     * 判断索引是否存在
+     * Determine if the index exists
      *
      * @param index
      * @return
@@ -108,7 +108,7 @@ public class ElasticsearchUtil {
 
     /**
      * @Author: LX
-     * @Description: 判断inde下指定type是否存在
+     * @Description: Determines whether the specified type exists under inde
      * @Date: 2018/11/6 14:46
      * @Modified by:
      */
@@ -119,12 +119,12 @@ public class ElasticsearchUtil {
     }
 
     /**
-     * 数据添加，正定ID
+     * Data addition, positive definite ID
      *
-     * @param jsonObject 要增加的数据
-     * @param index      索引，类似数据库
-     * @param type       类型，类似表
-     * @param id         数据ID
+     * @param jsonObject Data to add
+     * @param index      Index, similar to a database
+     * @param type       Type, similar to table
+     * @param id         Data ID
      * @return
      */
     public static String addData(JSONObject jsonObject, String index, String type, String id) {
@@ -134,11 +134,11 @@ public class ElasticsearchUtil {
     }
 
     /**
-     * 数据添加
+     * Data addition
      *
-     * @param jsonObject 要增加的数据
-     * @param index      索引，类似数据库
-     * @param type       类型，类似表
+     * @param jsonObject Data to add
+     * @param index      Index, similar to a database
+     * @param type       Type, similar to table
      * @return
      */
     public static String addData(JSONObject jsonObject, String index, String type) {
@@ -146,11 +146,11 @@ public class ElasticsearchUtil {
     }
 
     /**
-     * 通过ID删除数据
+     * Delete data by ID
      *
-     * @param index 索引，类似数据库
-     * @param type  类型，类似表
-     * @param id    数据ID
+     * @param index Index, similar to a database
+     * @param type  Type, similar to table
+     * @param id    Data ID
      */
     public static void deleteDataById(String index, String type, String id) {
 
@@ -160,12 +160,12 @@ public class ElasticsearchUtil {
     }
 
     /**
-     * 通过ID 更新数据
-     *
-     * @param jsonObject 要增加的数据
-     * @param index      索引，类似数据库
-     * @param type       类型，类似表
-     * @param id         数据ID
+     * Update data by ID
+       *
+       * @param jsonObject data to be added
+       * @param index index, similar to database
+       * @param type type, similar to table
+       * @param id data ID
      * @return
      */
     public static void updateDataById(JSONObject jsonObject, String index, String type, String id) {
@@ -179,12 +179,12 @@ public class ElasticsearchUtil {
     }
 
     /**
-     * 通过ID获取数据
-     *
-     * @param index  索引，类似数据库
-     * @param type   类型，类似表
-     * @param id     数据ID
-     * @param fields 需要显示的字段，逗号分隔（缺省为全部字段）
+     * Get data by ID
+      *
+      * @param index index, similar to database
+      * @param type type, similar to table
+      * @param id data ID
+      * @param fields The fields to be displayed, separated by commas (default is all fields)
      * @return
      */
     public static Map<String, Object> searchDataById(String index, String type, String id, String fields) {
@@ -202,17 +202,16 @@ public class ElasticsearchUtil {
 
 
     /**
-     * 使用分词查询,并分页
-     *
-     * @param index          索引名称
-     * @param type           类型名称,可传入多个type逗号分隔
-     * @param startPage      当前页
-     * @param pageSize       每页显示条数
-     * @param query          查询条件
-     * @param fields         需要显示的字段，逗号分隔（缺省为全部字段）
-     * @param sortField      排序字段
-     * @param highlightField 高亮字段
-     * @return
+      * Use word search and pagination
+      * @param index index name
+      * @param type type name, you can pass multiple type comma separated
+      * @param startPage current page
+      * @param pageSize Display number of pages per page
+      * @param query query conditions
+      * @param fields The fields to be displayed, separated by commas (default is all fields)
+      * @param sortField sort field
+      * @param highlightField highlight field
+      * @return
      */
     public static EsPage searchDataPage(String index, String type, int startPage, int pageSize, QueryBuilder query, String fields, String sortField, String highlightField) {
         SearchRequestBuilder searchRequestBuilder = client.prepareSearch(index);
@@ -221,24 +220,24 @@ public class ElasticsearchUtil {
         }
         searchRequestBuilder.setSearchType(SearchType.QUERY_THEN_FETCH);
 
-        // 需要显示的字段，逗号分隔（缺省为全部字段）
+        // Fields to display, separated by commas (default is all fields)
         if (StringUtils.isNotEmpty(fields)) {
             searchRequestBuilder.setFetchSource(fields.split(","), null);
         }
 
-//排序字段
+//Sort fields
         if (StringUtils.isNotEmpty(sortField)) {
             searchRequestBuilder.addSort(sortField, SortOrder.DESC);
         }
 
-// 高亮（xxx=111,aaa=222）
+// Highlight (xxx = 111, aaa = 222)
         if (StringUtils.isNotEmpty(highlightField)) {
             HighlightBuilder highlightBuilder = new HighlightBuilder();
 
-            //highlightBuilder.preTags("<span style='color:red' >");//设置前缀
-            //highlightBuilder.postTags("</span>");//设置后缀
+            //highlightBuilder.preTags("<span style='color:red' >");//Set prefix
+            //highlightBuilder.postTags("</span>");//Set suffix
 
-            // 设置高亮字段
+            // Set highlight field
             highlightBuilder.field(highlightField);
             searchRequestBuilder.highlighter(highlightBuilder);
         }
@@ -246,25 +245,25 @@ public class ElasticsearchUtil {
 //searchRequestBuilder.setQuery(QueryBuilders.matchAllQuery());
         searchRequestBuilder.setQuery(query);
 
-        // 分页应用
+        // Paging application
         searchRequestBuilder.setFrom(startPage).setSize(pageSize);
 
-        // 设置是否按查询匹配度排序
+        // Set whether to sort by query matching
         searchRequestBuilder.setExplain(true);
 
-        //打印的内容 可以在 Elasticsearch head 和 Kibana  上执行查询
+        //Printed content can be queried on Elasticsearch head and Kibana
         LOGGER.info("\n{}", searchRequestBuilder);
 
-        // 执行搜索,返回搜索响应信息
+        // Perform a search and return search response information
         SearchResponse searchResponse = searchRequestBuilder.execute().actionGet();
 
         long totalHits = searchResponse.getHits().totalHits;
         long length = searchResponse.getHits().getHits().length;
 
-        LOGGER.debug("共查询到[{}]条数据,处理数据条数[{}]", totalHits, length);
+        LOGGER.debug("A total of [{}] data was found, and the number of processed data was [{}]", totalHits, length);
 
         if (searchResponse.status().getStatus() == 200) {
-// 解析对象
+// Parse Object
             List<Map<String, Object>> sourceList = setSearchResponse(searchResponse, highlightField);
 
             return new EsPage(startPage, pageSize, (int) totalHits, sourceList);
@@ -276,15 +275,15 @@ public class ElasticsearchUtil {
 
 
     /**
-     * 使用分词查询
-     *
-     * @param index          索引名称
-     * @param type           类型名称,可传入多个type逗号分隔
-     * @param query          查询条件
-     * @param size           文档大小限制
-     * @param fields         需要显示的字段，逗号分隔（缺省为全部字段）
-     * @param sortField      排序字段
-     * @param highlightField 高亮字段
+     * Use word segmentation
+      *
+      * @param index index name
+      * @param type type name, you can pass multiple type comma separated
+      * @param query query conditions
+      * @param size Document size limit
+      * @param fields The fields to be displayed, separated by commas (default is all fields)
+      * @param sortField sort field
+      * @param highlightField highlight field
      * @return
      */
     public static List<Map<String, Object>> searchListData(
@@ -298,7 +297,7 @@ public class ElasticsearchUtil {
 
         if (StringUtils.isNotEmpty(highlightField)) {
             HighlightBuilder highlightBuilder = new HighlightBuilder();
-            // 设置高亮字段
+            // Set highlight field
             highlightBuilder.field(highlightField);
             searchRequestBuilder.highlighter(highlightBuilder);
         }
@@ -318,7 +317,7 @@ public class ElasticsearchUtil {
             searchRequestBuilder.setSize(size);
         }
 
-        //打印的内容 可以在 Elasticsearch head 和 Kibana  上执行查询
+        //Printed content can be queried on Elasticsearch head and Kibana
         LOGGER.info("\n{}", searchRequestBuilder);
 
         SearchResponse searchResponse = searchRequestBuilder.execute().actionGet();
@@ -326,10 +325,10 @@ public class ElasticsearchUtil {
         long totalHits = searchResponse.getHits().totalHits;
         long length = searchResponse.getHits().getHits().length;
 
-        LOGGER.info("共查询到[{}]条数据,处理数据条数[{}]", totalHits, length);
+        LOGGER.info("A total of [{}] data was found, and the number of processed data [{}] ", totalHits, length);
 
         if (searchResponse.status().getStatus() == 200) {
-            // 解析对象
+            // Parse Object
             return setSearchResponse(searchResponse, highlightField);
         }
         return null;
@@ -338,7 +337,7 @@ public class ElasticsearchUtil {
 
 
     /**
-     * 高亮结果集 特殊处理
+     * Highlight result set special processing
      *
      * @param searchResponse
      * @param highlightField
@@ -352,14 +351,14 @@ public class ElasticsearchUtil {
 
             if (StringUtils.isNotEmpty(highlightField)) {
 
-                System.out.println("遍历 高亮结果集，覆盖 正常结果集" + searchHit.getSourceAsMap());
+                System.out.println("Traversal highlighting the result set, covering the normal result set" + searchHit.getSourceAsMap());
                 Text[] text = searchHit.getHighlightFields().get(highlightField).getFragments();
 
                 if (text != null) {
                     for (Text str : text) {
                         stringBuffer.append(str.string());
                     }
-//遍历 高亮结果集，覆盖 正常结果集
+                    // traverse the highlighted result set, covering the normal result set
                     searchHit.getSourceAsMap().put(highlightField, stringBuffer.toString());
                 }
             }

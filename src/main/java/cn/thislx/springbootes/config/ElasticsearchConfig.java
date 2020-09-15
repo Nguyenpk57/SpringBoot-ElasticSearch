@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import java.net.InetAddress;
 
 /**
- * @Configuration用于定义配置类，可替换xml配置文件
+ * @Configuration Used to define the configuration class, replace the xml configuration file
  */
 @Configuration
 public class ElasticsearchConfig {
@@ -21,46 +21,46 @@ public class ElasticsearchConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticsearchConfig.class);
 
     /**
-     * elk集群地址
+     * elk cluster address
      */
     @Value("${elasticsearch.ip}")
     private String hostName;
 
     /**
-     * 端口
+     * port
      */
     @Value("${elasticsearch.port}")
     private String port;
 
     /**
-     * 集群名称
+     * Cluster Name
      */
     @Value("${elasticsearch.cluster.name}")
     private String clusterName;
 
     /**
-     * 连接池
+     * connection pool
      */
     @Value("${elasticsearch.pool}")
     private String poolSize;
 
     /**
-     * Bean name default  函数名字
+     * Bean name default  Function name
      *
      * @return
      */
     @Bean(name = "transportClient")
     public TransportClient transportClient() {
-        LOGGER.info("Elasticsearch初始化开始。。。。。");
+        LOGGER.info("Elasticsearch initialization begins。。。。。");
         TransportClient transportClient = null;
         try {
-            // 配置信息
+            // Configuration information
             Settings esSetting = Settings.builder()
-                    .put("cluster.name", clusterName) //集群名字
-                    .put("client.transport.sniff", true)//增加嗅探机制，找到ES集群
-                    .put("thread_pool.search.size", Integer.parseInt(poolSize))//增加线程池个数，暂时设为5
+                    .put("cluster.name", clusterName) //Cluster name
+                    .put("client.transport.sniff", true)//Add sniffing mechanism to find ES cluster
+                    .put("thread_pool.search.size", Integer.parseInt(poolSize))//Increase the number of thread pools, temporarily set to 5
                     .build();
-            //配置信息Settings自定义
+            //Configuration information
             transportClient = new PreBuiltTransportClient(esSetting);
             TransportAddress transportAddress = new TransportAddress(InetAddress.getByName(hostName), Integer.valueOf(port));
             transportClient.addTransportAddresses(transportAddress);

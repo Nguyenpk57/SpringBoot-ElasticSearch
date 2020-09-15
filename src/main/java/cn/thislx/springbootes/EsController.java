@@ -9,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,7 +30,7 @@ import java.util.Random;
 public class EsController {
 
     /**
-     * 测试索引
+     * Test index
      */
     private String indexName = "test_index";
 
@@ -42,7 +41,7 @@ public class EsController {
 
     /**
      * http://127.0.0.1:8080/es/createIndex
-     * 创建索引
+     * Create index
      *
      * @param request
      * @param response
@@ -53,13 +52,13 @@ public class EsController {
         if (!ElasticsearchUtil.isIndexExist(indexName)) {
             ElasticsearchUtil.createIndex(indexName);
         } else {
-            return "索引已经存在";
+            return "Index already exists";
         }
-        return "索引创建成功";
+        return "Index created successfully";
     }
 
     /**
-     * 插入记录
+     * Insert record
      *
      * @return
      */
@@ -75,7 +74,7 @@ public class EsController {
     }
 
     /**
-     * 插入记录
+     * Insert record
      *
      * @return
      */
@@ -92,7 +91,7 @@ public class EsController {
     }
 
     /**
-     * 删除记录
+     * Delete Record
      *
      * @return
      */
@@ -100,14 +99,14 @@ public class EsController {
     public String delete(String id) {
         if (StringUtils.isNotBlank(id)) {
             ElasticsearchUtil.deleteDataById(indexName, esType, id);
-            return "删除id=" + id;
+            return "Delete id=" + id;
         } else {
-            return "id为空";
+            return "id is empty";
         }
     }
 
     /**
-     * 更新数据
+     * update data
      *
      * @return
      */
@@ -117,17 +116,17 @@ public class EsController {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("id", id);
             jsonObject.put("age", 31);
-            jsonObject.put("name", "修改");
+            jsonObject.put("name", "modify");
             jsonObject.put("date", new Date());
             ElasticsearchUtil.updateDataById(jsonObject, indexName, esType, id);
             return "id=" + id;
         } else {
-            return "id为空";
+            return "id is empty";
         }
     }
 
     /**
-     * 获取数据
+     * retrieve data
      * http://127.0.0.1:8080/es/getData?id=2018-04-25%2016:33:44
      *
      * @param id
@@ -139,13 +138,13 @@ public class EsController {
             Map<String, Object> map = ElasticsearchUtil.searchDataById(indexName, esType, id, null);
             return JSONObject.toJSONString(map);
         } else {
-            return "id为空";
+            return "id is empty";
         }
     }
 
     /**
-     * 查询数据
-     * 模糊查询
+     * Query data
+     * Fuzzy query
      *
      * @return
      */
@@ -154,7 +153,7 @@ public class EsController {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
         boolean matchPhrase = false;
         if (matchPhrase == Boolean.TRUE) {
-            //不进行分词搜索
+            //No word search
             boolQuery.must(QueryBuilders.matchPhraseQuery("name", "m"));
         } else {
             boolQuery.must(QueryBuilders.matchQuery("name", "m-m"));
@@ -165,9 +164,8 @@ public class EsController {
     }
 
     /**
-     * 通配符查询数据
-     * 通配符查询 ?用来匹配1个任意字符，*用来匹配零个或者多个字符
-     *
+     * Wildcard query data
+     * Wildcard query? Used to match 1 arbitrary character, * used to match zero or more characters
      * @return
      */
     @RequestMapping("/queryWildcardData")
@@ -178,7 +176,7 @@ public class EsController {
     }
 
     /**
-     * 正则查询
+     * Regular query
      *
      * @return
      */
@@ -190,7 +188,7 @@ public class EsController {
     }
 
     /**
-     * 查询数字范围数据
+     * Querying numeric range data
      *
      * @return
      */
@@ -204,7 +202,7 @@ public class EsController {
     }
 
     /**
-     * 查询日期范围数据
+     * Querying date range data
      *
      * @return
      */
@@ -218,13 +216,13 @@ public class EsController {
     }
 
     /**
-     * 查询分页
+     * Query pagination
      *
-     * @param startPage 第几条记录开始
-     *                  从0开始
-     *                  第1页 ：http://127.0.0.1:8080/es/queryPage?startPage=0&pageSize=2
-     *                  第2页 ：http://127.0.0.1:8080/es/queryPage?startPage=2&pageSize=2
-     * @param pageSize  每页大小
+     * @param startPage The first record begins
+     *                  Starting from 0
+     *                  page 1 ：http://127.0.0.1:8080/es/queryPage?startPage=0&pageSize=2
+     *                  page 2 ：http://127.0.0.1:8080/es/queryPage?startPage=2&pageSize=2
+     * @param pageSize  Page size
      * @return
      */
     @RequestMapping("/queryPage")
@@ -236,7 +234,7 @@ public class EsController {
             EsPage list = ElasticsearchUtil.searchDataPage(indexName, esType, Integer.parseInt(startPage), Integer.parseInt(pageSize), boolQuery, null, null, null);
             return JSONObject.toJSONString(list);
         } else {
-            return "startPage或者pageSize缺失";
+            return "startPage or pageSize is missing";
         }
     }
 }
